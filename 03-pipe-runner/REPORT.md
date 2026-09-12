@@ -5,7 +5,7 @@
 
 ## What
 
-*What you built, and how.*
+*Blah blah blah*
 
 ## Results
 
