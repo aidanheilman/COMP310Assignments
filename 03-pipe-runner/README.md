@@ -49,16 +49,28 @@ start rather than after. The commonest lost mark is TODO 4.
 
 ## Build
 
-*How is it built? Give the exact command.*
+Make
 
 ## Run
 
-*How do you run it? Give the exact command.*
+./runner
 
 ## File map
 
-*One line per file: what it is for.*
+/submission
+    /src
+        runner.c - main c file to be compiled with make, contains main and all sub functions
+    /tests
+        check-submission-spec.sh - checks submission formatting
+        make-submission.sh - zips everything and validates submission formatting 
+        run-tests.sh - tests code functionality
+    Makefile - compiles runner.c under make, make test runs test scripts, make submit zips
+    README.md - this file, provides valuable information about codebase
+    REPORT.md - report file, covers what was made, test results, & citations
+    submission.json - specially formatted json file for grading/professor organization
 
 ## Notes
 
-*Anything a reader should know — what is unfinished, what you would do next, anything that surprised you.*
+Straightforward if the underlying concepts are well understood. 
+
+Interesting note: I usually write and test the code on MacOS before doing additional testing in my Linux VM. In this case, I ran make test after finishing runner.c and the test suite said I only passed 2 tests. After scrutinizing my code 3 or 4 times, I found nothing wrong. When I ran the test suite in Linux it worked perfectly. So, I believe something in run-tests.sh must be Linux dependent, given that runner.c should be POSIX compliant and therefore run on MacOS.
