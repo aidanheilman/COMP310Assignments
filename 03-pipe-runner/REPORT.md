@@ -4,11 +4,6 @@
 <!-- Replace the italic prompt under each heading with your own words. Keep the headings: the specification names them, and `make test` checks that they are here. -->
 
 ## What
-Under What, answer this explicitly: what would break if the parent did not close the write
-end, and why?.
-What — how you wired redirection and the pipe. Name each descriptor and say which
-process closes it. 
-
 I wired redirection by using open() and assigning that to an int file descriptor, copying the child process's standard out to the file descriptor, and then closing the file decriptor. This is all done in the child for redirection.
 
 For the pipe, in the parent an int array file descriptor holding 0 and 1 is declared, which is then put into the pipe(command), which creates a pipe with a read and write end. 
@@ -28,6 +23,7 @@ hello
 csh> ls | wc -l
        8
 
+ALL DONE FOR EXACT SAME CODE, DIFFERENCE IN OS CHANGED TEST SUITE OUTCOME DRASTICALLY
 Make test on MacOS
 aidanheilman@Aidans-Laptop 03-pipe-runner % make test
 cc -std=c11 -Wall -Wextra -O2 -o runner src/runner.c
@@ -54,6 +50,52 @@ cc -std=c11 -Wall -Wextra -O2 -o runner src/runner.c
 make: *** [test] Error 1
 
 Make test on Linux
+aidan@aidanlinux:~/Desktop/COMP310Assignments/03-pipe-runner$ make test
+cc -std=c11 -Wall -Wextra -O2 -o runner src/runner.c
+== plain commands still work ==
+  PASS: runs an external command
+
+== redirection: cmd > file ==
+  PASS: creates the file
+  PASS: writes the output there
+  PASS: shell stdout survives a redirect
+
+== pipelines: cmdA | cmdB ==
+  PASS: data crosses the pipe
+  PASS: both stages run (wc sees 3 lines)
+
+== the two that catch a broken implementation ==
+  PASS: pipeline terminates (reader sees EOF)
+  PASS: 40 pipelines in one session, no descriptor leak
+
+== errors are reported, not silent ==
+  PASS: unknown command reports why
+
+== 9 passed, 0 failed ==
+== the files the assignment asks for ==
+  [ok]   src is there
+  [ok]   tests is there
+  [ok]   Makefile is there
+  [ok]   README.md is there
+  [ok]   REPORT.md is there
+
+== the headings your report and readme need ==
+  [ok]   README.md has Build
+  [ok]   README.md has Run
+  [ok]   README.md has File map
+  [ok]   README.md has Notes
+  [ok]   REPORT.md has What
+  [ok]   REPORT.md has Results
+  [ok]   REPORT.md has Citations
+
+== submission.json ==
+  [ok]   submission.json declares label
+  [ok]   submission.json declares student
+  [ok]   submission.json declares entrypoint
+  [ok]   submission.json declares what_i_built
+  [ok]   submission.json has your own values
+
+  17 passed, 0 failed
 
 ## Citations
 Course material only.
