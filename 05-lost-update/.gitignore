@@ -1,0 +1,9 @@
+# Written by tests/check_submission_ready.py on every `make test`.
+# It travels with your submission; it is not part of your source.
+bench/SUBMISSION-WARNINGS.txt
+SUBMISSION-WARNINGS.txt
+# Build output: `make` regenerates all of it from your sources and your netid.
+counter
+counter-*
+src/config.h
+tests/suspects/

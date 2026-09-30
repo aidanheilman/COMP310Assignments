@@ -1,0 +1,6 @@
+{
+  "label": "A5",
+  "student": "yournetid",
+  "entrypoint": "make && make trials",
+  "what_i_built": "one sentence about what you measured"
+}
