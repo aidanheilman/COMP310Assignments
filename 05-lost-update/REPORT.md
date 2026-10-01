@@ -10,32 +10,33 @@ long seen = counter; // read, store
 
 ## What
 
-*One paragraph: what you measured and what you changed.*
+*One paragraph: what you measured and what you changed.* //DO AT END??
 
 ## Results
 
 ### The race, over 30 trials
-
-*From `make summary` for `bench/trials.csv`: the median lost updates, the lowest
-and highest, and what that spread means. If a trial came out correct, say so and
-say what that does not show.*
-
 Median losses: 202738
 Minimum losses: 196918
 Maximum losses: 207748
 
-This spread indicates that over 30 trials, 70.33-74.20% of values were lost, every single time. The average of the min and max is 202,333, which is within 500 losses of the median value, indicating no major outliers in either direction and relatively consistent results throughout this set of trials. In practice, a 75% loss rate would indicate that for every iteration, the same value was read by all four threads. Given a rough average of 72% lost per trial, only around 3% of iterations were not read by all four threads within the read, add, store window. 
+This spread indicates that over 30 trials, 70.33-74.20% of values were lost, every single time. No trials came out correct. The average of the min and max is 202,333, which is within 500 losses of the median value, indicating no major outliers in either direction and relatively consistent results throughout this set of trials. In practice, a 75% loss rate would indicate that for every iteration, the same value was read by all four threads. Given a rough average of 72% lost per trial, only around 3% of iterations were not read by all four threads within the read, add, store window. 
 
 ### Where the window is
 
 *The read line and the write line, and what another thread does in between.
 Then: why the loss comes from two reads returning the same value, not from the
-write.*
+write.* // DO AFTER FIX
 
 ### The intervention
 
-*The width you chose, the direction you predicted and why — written before you
-ran it — then the measured result from `bench/trials-intervention.csv`.*
+I chose a spin value of 100, over triple the original value of 31. I predict that this will increase the rate of loss, likely almost to 75%, because it is increasing the time spent between a read and a write operation. This increases the time window for, and therefore likelihood that two or more threads will read the counter value before they can increment it and store it back in the register. 
+
+Post intervention results:
+Median loss: 208692
+Minimum loss: 197291
+Maximum loss: 210797 
+
+This is in line with what I predicted, an increase in all measures. 
 
 ### After the fix, and what it cost
 
