@@ -49,6 +49,26 @@ This is in line with what I predicted, an increase in all measures.
 step by step: both trimmed medians and trimmed ranges, and the branch you
 landed in.*
 
+Worst case across the fixed trials was 0
+
+Original trials fastest: 8.1 ms
+
+Original trials slowest: 10.7 ms
+
+Original trials median: 9.05 ms
+
+Original trials trimmed range: 8.2 - 10.2 ms
+
+Fixed trials fastest: 39.2 ms
+
+Fixed trials slowest: 43.4 ms
+
+Fixed trials median: 40.7 ms
+
+Fixed trials trimmed range: 39.4 - 42.7 ms
+
+The trimmed ranges do not overlap, and the fixed median is more than 4x aboce the unfixed median. This puts the data in branch 3, showing that the lock is a measurable cost on the workload. 
+
 ### Prediction vs measurement
 
 *Compare your Prediction section against what happened. Where you were wrong,

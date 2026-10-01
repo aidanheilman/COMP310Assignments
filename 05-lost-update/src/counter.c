@@ -14,6 +14,8 @@
 #  error "src/config.h is not generated yet -- run `make config` first."
 #endif
 #include "config.h"
+#include <string.h>
+
 
 /* `make trials-intervention SPIN=<n>` builds this file with
  * -DA5_SPIN_OVERRIDE=<n> (handout section 2.4). A normal build uses your own
@@ -22,7 +24,9 @@
 #define A5_SPIN_OVERRIDE A5_SPIN
 #endif
 
+/* File scope counter & mutex */
 static long counter = 0;
+static pthread_mutex_t counter_lock = PTHREAD_MUTEX_INITIALIZER;
 
 /* Widens the gap between the read and the write. It does no work; it exists so
  * the race is large enough to measure rather than large enough to argue about. */
@@ -36,19 +40,11 @@ static void *worker(void *arg)
 {
     (void) arg;
     for (long k = 0; k < A5_ITERATIONS; k++) {
-        /* TODO 1 -- make this update safe (handout section 2.5; C companion
-         * 5.9 shows the calls).
-         *
-         * CONTRACT: after every thread has been joined, `counter` equals
-         * A5_THREADS * A5_ITERATIONS on every run, for any window width. The
-         * read, the spin and the write stay, in that order, and all three sit
-         * inside ONE critical section.
-         *
-         * Leave these three lines exactly as they are until sections 2.2 and
-         * 2.4 are measured: both measure this code unfixed. */
+        pthread_mutex_lock(&counter_lock);
         long seen = counter;
         spin(A5_SPIN_OVERRIDE);
         counter = seen + 1;
+        pthread_mutex_unlock(&counter_lock);
     }
     return NULL;
 }
@@ -58,15 +54,18 @@ int main(void)
     pthread_t t[A5_THREADS];
 
     for (int i = 0; i < A5_THREADS; i++) {
-        /* TODO 2 -- start the thread, and check what pthread_create returns.
-         * CONTRACT: on failure, report which call failed and why, and exit
-         * non-zero. It returns an error NUMBER and does NOT set errno. The call
-         * below currently ignores the return value. */
-        pthread_create(&t[i], NULL, worker, NULL);
+        int rc = pthread_create(&t[i], NULL, worker, NULL);
+        if (rc != 0) {
+            fprintf(stderr, "pthread create: %s\n", strerror(rc));
+            exit(1);
+        }
     }
     for (int i = 0; i < A5_THREADS; i++) {
-        /* TODO 3 -- wait for it, and check the return the same way. */
-        pthread_join(t[i], NULL);
+        int rc = pthread_join(t[i], NULL);
+        if (rc != 0) {
+            fprintf(stderr, "pthread join: %s\n", strerror(rc));
+            exit(1);
+        }
     }
 
     printf("%ld %ld\n", counter, (long) A5_THREADS * A5_ITERATIONS);
