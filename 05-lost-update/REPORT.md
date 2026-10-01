@@ -2,12 +2,11 @@
 ## Week 5 — A5: The lost update
 
 ## Prediction
+Given 4 threads each running 70000 iterations with a spin of 31 with no mutex to lock them, the final value is hard to predict, because it will vary per run, OS, hardware, etc. A decent amount will almost certainly be lost irreverant of any of the above variables. I would guess that the final count will be around the average value of 105,000, with 175,000 average losses. This is assumptive of a loss of 5/8ths, or 62.5 percent. I chose this with a baseline assumption that between two threads, roughly 50 percent would be lost (4/8ths), and that because there are double the threads, the rate of loss would go up somewhat proportionately due to the increased chance for multiple threads to read the counter variable at the same time before writing. The loss will happen exactly at the aforementioned point. A counter++ operation is not atomic, it consists of a read, an add, and a store at the machine level. Races happen when two or more threads read the same variable in between each others' atomic level operations. If two threads read the same value, write an addition of 1 to the same value and both store that, the machine has spent 2 iterations, but the counter value has increased by only 1. In the counter.c file, the lines that need to be locked where all of this reading, adding, and storing are happening are lines 49-51. Note this is before making any changes to the file.
 
-*Write this before you run anything.*
-
-- Final value I expect, and why:
-- Fraction of updates I expect to be lost:
-- Where I think the loss happens:
+long seen = counter; // read, store 
+        spin(A5_SPIN_OVERRIDE);
+        counter = seen + 1; // read, add, store 
 
 ## What
 
@@ -20,6 +19,12 @@
 *From `make summary` for `bench/trials.csv`: the median lost updates, the lowest
 and highest, and what that spread means. If a trial came out correct, say so and
 say what that does not show.*
+
+Median losses: 202738
+Minimum losses: 196918
+Maximum losses: 207748
+
+This spread indicates that over 30 trials, 70.33-74.20% of values were lost, every single time. The average of the min and max is 202,333, which is within 500 losses of the median value, indicating no major outliers in either direction and relatively consistent results throughout this set of trials. In practice, a 75% loss rate would indicate that for every iteration, the same value was read by all four threads. Given a rough average of 72% lost per trial, only around 3% of iterations were not read by all four threads within the read, add, store window. 
 
 ### Where the window is
 
@@ -61,9 +66,9 @@ plainly is always better than leaving it out.*
 
 ## Answers
 
-threads:
-iterations:
-lost_median:
+threads: 4
+iterations: 70000
+lost_median: 202738
 read_line:
 write_line:
 intervention_spin:

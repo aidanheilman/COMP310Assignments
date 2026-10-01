@@ -1,6 +1,6 @@
 {
   "label": "A5",
-  "student": "yournetid",
+  "student": "aheilman",
   "entrypoint": "make && make trials",
-  "what_i_built": "one sentence about what you measured"
+  "what_i_built": "Effects of mutex utilization, proven by data"
 }
